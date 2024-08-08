@@ -1,0 +1,364 @@
+*{
+    box-sizing: border-box;
+}
+html{
+    font-size: 62.5%;
+}
+body{
+    font-size: 1.6rem;
+    font-family: "Poppins", sans-serif;
+}
+/*common:thuộc tính dùng chung*/
+a{
+    text-decoration: none;
+}
+.line-clamp{
+    display: -webkit-box;
+    -webkit-line-clamp: var(--line-clamp, 1);
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.container{
+    width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: calc(100% - 48px);/*giữ cho khi kéo trang vẫn còn hở 1 khoảng 48px*/
+}
+.btn{
+display: inline-block;
+min-width: 118px;
+padding: 0 16px;
+line-height: 50px;
+color: #FFF;
+text-align: center;
+font-size: 1.6rem;
+font-weight: 600;
+border-radius: 24.5px;
+background: #143C3C;
+}
+.btn:hover{
+    background-color: #7e704a;
+}
+/* header*/
+.header{
+    background-color: #ffff;
+}
+.header.fixed{
+    position: sticky;/*neo phần header khi cuộn không bị mất*/
+    top:-28px;
+    z-index: 1;
+}
+
+.header .body{
+    display: flex;
+    align-items: center;
+    padding: 36px 0 8px;
+}
+
+.nav{
+    margin-left: auto;
+}
+.nav ul{
+    display: flex;
+}
+.nav a{
+padding: 8px 21px;
+color: #5F5B53;
+font-size: 1.6rem;
+position: relative;
+}
+.nav a:hover,
+.nav li.active a{
+   text-shadow: 1px 0 0 currentColor;
+    color: #171100;
+}
+.nav li.active a::after{
+    content: "";/*bắt buộc phải có khi dùng affter*/
+    width: 12px;
+    height: 2px;
+    background-color: #171100;
+    border-radius: 1px;
+    display: block;
+    position: absolute;
+    left: 21px;
+    bottom: 6px;
+}
+.header .sign-up-btn{
+    min-width: 144px;
+}
+.header .action{
+    margin-left: 49px;
+}
+.header-body{
+    margin-top: 60px;
+}
+.header-row{
+    display: flex;
+    margin-top: 150px;
+}
+.header__heading{
+font-family: "Public Sans";
+font-size: 50px;
+font-weight: 800;
+line-height: 60px;
+color: #152427;
+width: 368px;
+}
+.header__desc{
+font-family: "Public Sans";
+font-size: 18px;
+font-style: normal;
+font-weight: 500;
+line-height: 28px; 
+color: #575D5E;
+margin-top: 20px;
+width: 341px;
+}
+.header__action{
+    margin-top: 42px;
+    position: relative;
+}
+.header__btn{
+    width: 173px;
+height: 57px;
+font-family: "Public Sans";
+font-size: 18px;
+font-style: normal;
+font-weight: 500;
+line-height: 28px;
+padding: 14px 35px;
+}
+.btn__play{
+position: absolute;
+width: 44px;
+height: 43px;
+border-radius: 50%;
+background-color: #83A17D;
+margin-top: 10px;
+margin-left: 43px;
+}
+.btn__play--desc{
+margin-left: 110px;
+font-family: Poppins;
+font-size: 18px;
+font-style: normal;
+font-weight: 600;
+line-height: 30px;
+color: #152427;
+text-align: center;
+}
+.header__right{
+    margin-left: 100px;
+    position: relative;
+}
+.header__img{
+    margin-left: 20px;
+    width: 202px;
+    height: 466px;
+    border-radius: 110px;
+}
+.header__img--2{
+  margin-left: 20px;
+  box-shadow: 0px 13px 88px 25px rgb(57, 94, 59);
+}
+.header__left{
+    position: relative;
+}
+.rotation{
+    position: absolute;
+    top: -180px;
+    right: -40px;
+    width: 180px;
+    height: 180px;
+}
+.header__images{
+    position: relative;
+}
+.swirl{
+    position: absolute;
+    left: 740px;
+    margin-top: -50px;
+}
+.header__rotation--right{
+    position: absolute;
+    right: 280px;
+    bottom: 200px;
+}
+/*BRAND*/
+.brand__logo{
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin-top: 207px;
+    height: 201px;
+    border-radius: 100.5px;
+    background-color: #E2EDDF;
+    padding: 0 50px;
+    position: relative;
+}
+.brand-swirl{
+    position: absolute;
+    right: 0;
+    left: 1000px;
+    width: 300px;
+    height: 300px;
+    
+}
+.brand__logo--left{
+    padding-left: 200px;
+}
+.brand__gg{
+color:  #143C3C;
+font-family: Poppins;
+font-size: 31px;
+font-weight: 500;
+}
+.slack__desc{
+color: #143C3C;
+font-family: Poppins;
+font-size: 32px;
+font-weight: 600;
+}
+.ag__desc{
+color: #163C35;
+font-family: Poppins;
+font-size: 26px;
+font-weight: 400;
+}
+.her__desc{
+color: #143C3C;
+font-family: Poppins;
+font-size: 19px;
+font-weight: 600;
+letter-spacing: 1.995px;
+}
+/*services*/
+.services{
+    margin-top: 144px;
+}
+.services__heading{
+width: 520px;
+color:#152427;
+font-family: Poppins;
+font-size: 42px;
+font-weight: 600;
+line-height: 52px; 
+}
+.underline{
+position: absolute;
+width: 200px;
+height: 2px;
+background-color: #152427;
+right: 0;
+margin-right: 650px;
+}
+.services-top{
+    position: relative;
+}
+.services-body{
+    margin-top: 150px;
+    display: flex;
+}
+.services__list{
+    background-color: #ffff;
+    width: 370px;
+    height: 500px;
+    box-shadow: 0px 13px 88px 25px rgb(57, 94, 59);
+    border-radius: 30px;
+    margin-left: 40px;
+}
+.services__list--heading{
+margin-top: 24px;
+font-family: Poppins;
+font-size: 22px;
+font-weight: 600;
+line-height: 22px;
+color: #152427;
+margin-left: 20px;
+}
+.services__list--desc{
+    margin-left: 20px;
+    margin-top: 18px;
+    font-family: Poppins;
+font-size: 14px;
+font-weight: 500;
+line-height: 24px; 
+color: #7D8188;
+width: 268px;
+}
+
+.services__list--img{
+    border-radius: 30px 30px 0 0;
+}
+/*ABOUT*/
+.about-row{
+    margin-top: 400px;
+}
+.about-row{
+    display: flex;
+}
+.about-img{
+    display: flex;
+    width: 284px;
+    height: 480px;
+    border-radius: 210px;
+    margin-left: 80px;
+}
+.about__img{
+    margin-left: 30px;
+
+}
+.about__img--1{
+    margin-left: 0;
+    margin-top: -150px;
+}
+.about__img--2{
+    margin-top: -60px;
+}
+.about-body{
+    margin-left: 500px;
+}
+.about__body--heading{
+font-family: Poppins;
+font-size: 42px;
+font-weight: 600;
+line-height: 52px;
+color: #152427;
+width: 483px;
+}
+.about__body--desc{
+font-family: Poppins;
+font-size: 16px;
+font-weight: 500;
+line-height: 26px;
+color: #7D8188;
+margin-top: 11px;
+width: 483px;
+}
+.about__body--subdesc{
+    display: flex;
+    margin-top: 40px;
+}
+.about-phantram{
+font-family: Poppins;
+font-size: 42px;
+font-weight: 600;
+line-height: 52px;
+color: #152427;
+}
+.about__subdesc{
+font-family: Poppins;
+font-size: 14px;
+font-weight: 500;
+line-height: 24px;
+width: 364px;
+height: 52px;
+margin-left: 20px;
+color: #7D8188;
+}
+.about__underline{
+    width: 483px;
+    height: 1px;
+    margin-top: 10px;
+    background-color: #143C3C;
+}
