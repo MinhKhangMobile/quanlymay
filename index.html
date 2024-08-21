@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./assets/css/reset.css">
     <link rel="stylesheet" href="./assets/css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sen:wght@400..800&display=swap" rel="stylesheet">
 </head>
@@ -47,7 +48,7 @@
             <div class="container">
                 <div class="header-row">
                     <div class="header__left">
-                        <h1 class="header__heading">We’re a creative design agency.</h1>
+                        <h1 class="header__heading" data-aos="zoom-out-right">We’re a creative design agency.</h1>
                         <p class="header__desc">A brilliant, modular agency template for startup’s build yours toady.</p>
                         <div class="header__action">
                             <a href="" class="btn header__btn">Get in touch</a>
@@ -99,27 +100,33 @@
             <div class="container">
                 <div class="services-row">
                     <div class="services-top">
-                        <h2 class="services__heading">We offer a wide range of design services</h2>
+                        <h2 class="services__heading" data-aos="zoom-in-right">We offer a wide range of design services</h2>
                         <div class="underline"></div>
                         <div class="services__arrow">
                         </div>
                     </div>
                     <div class="services-body">
-                        <div class="services__list">
+                        <div class="services__list" data-aos="fade-down"
+                        data-aos-easing="linear"
+                        data-aos-duration="1500">
                             <img src="./assets/img/ser1.png" alt="" class="services__list--img">
                             <h3 class="services__list--heading">Branding</h3>
                             <p class="services__list--desc">Create beautiful Agency website with 
                                 Boluethat converts more visitors than 
                                 any website.</p>
                         </div>
-                        <div class="services__list">
+                        <div class="services__list" data-aos="fade-down"
+                        data-aos-easing="linear"
+                        data-aos-duration="1500">
                             <img src="./assets/img/ser2.png" alt="" class="services__list--img">
                             <h3 class="services__list--heading">Web Design</h3>
                             <p class="services__list--desc">Create beautiful Agency website with 
                                 Boluethat converts more visitors than 
                                 any website.</p>
                         </div>
-                        <div class="services__list services__list--boxshadow">
+                        <div class="services__list services__list--boxshadow" data-aos="fade-down"
+                        data-aos-easing="linear"
+                        data-aos-duration="1500">
                             <img src="./assets/img/ser1.png" alt="" class="services__list--img">
                             <h3 class="services__list--heading">Graphic Design</h3>
                             <p class="services__list--desc">Create beautiful Agency website with 
@@ -135,13 +142,19 @@
             <div class="container">
                 <div class="about-row">
                     <div class="about-img">
-                        <div class="about__img about__img--1">
+                        <div class="about__img about__img--1" data-aos="flip-left"
+                        data-aos-easing="ease-out-cubic"
+                        data-aos-duration="2000">
                             <img src="./assets/img/header1.jpg" alt="" class="img-1">
                         </div>
-                        <div class="about__img about__img--2">
+                        <div class="about__img about__img--2" data-aos="flip-left"
+                        data-aos-easing="ease-out-cubic"
+                        data-aos-duration="2000">
                             <img src="./assets/img/header2.jpg" alt="" class="img-2">
                         </div>
-                        <div class="about__img about__img--3">
+                        <div class="about__img about__img--3" data-aos="flip-left"
+                        data-aos-easing="ease-out-cubic"
+                        data-aos-duration="2000">
                             <img src="./assets/img/header2.jpg" alt="" class="img-3">
                         </div>
                     </div>
@@ -339,5 +352,9 @@
             </div>
         </footer>
     </main>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+      </script>
 </body>
 </html>
