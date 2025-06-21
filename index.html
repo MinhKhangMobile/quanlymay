@@ -240,6 +240,9 @@
       document.getElementById("barcode").value = result;
     });
     scanner.start();
+    setInterval(() => {
+  $('#jtree').jstree(true).refresh(); // load lại cây
+}, 3000); // mỗi 3 giây
   </script>
 </body>
 </html>
