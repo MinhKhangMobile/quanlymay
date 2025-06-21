@@ -240,9 +240,6 @@
       document.getElementById("barcode").value = result;
     });
     scanner.start();
-    socket.on("treeUpdated", () => {
-  $('#jtree').jstree(true).refresh();
-});
   </script>
 </body>
 </html>
