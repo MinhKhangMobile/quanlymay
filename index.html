@@ -1,360 +1,245 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MODULARS</title>
-    <link rel="stylesheet" href="./assets/css/reset.css">
-    <link rel="stylesheet" href="./assets/css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Sen:wght@400..800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Quản Lý Mượn / Trả Máy Tính</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #e1eefc;
+      padding: 30px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 30%;
+      padding: 8px;
+      border: 2px solid #a1acec;
+      border-radius: 10px;
+    }
+
+    .button-group {
+      margin-top: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      padding: 10px 18px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #video {
+      margin-top: 20px;
+      width: 200px;
+      border: 1px solid #ccc;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 25px;
+      background: white;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    th {
+      background-color: #3498db;
+      color: white;
+    }
+
+    td input[type="checkbox"] {
+      transform: scale(1.2);
+    }
+  </style>
+
+  <!-- Thư viện -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qr-scanner/1.4.2/qr-scanner.umd.min.js"></script>
 </head>
 <body>
-    <main>
-        <!--HEADER-->
-        <header class="header fixed">
-            <div class="container">
-                <div class="body">
-                    <!--logo-->
-                    <img src="./assets/icon/logo.svg" alt="Lesson" class="logo">
-                    <!--nav-->
-                    <nav class="nav">
-                        <ul>
-                            <li class="active">
-                                <a href="#!">Home</a>
-                            </li>
-                            <li>
-                                <a href="#!">About</a>
-                            </li>
-                            <li>
-                                <a href="#!">Blog</a>
-                            </li>
-                            <li>
-                                <a href="#!">Contact</a>
-                            </li>
-                        </ul>
-                    </nav>
-                    <!--btn-action-->
-                    <div class="action">
-                        <a href="#!" class="btn sign-up-btn">Sign Up</a>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <!--HEADER-BODY-->
-        <div class="header-body">
-            <div class="container">
-                <div class="header-row">
-                    <div class="header__left">
-                        <h1 class="header__heading" data-aos="zoom-out-right">We’re a creative design agency.</h1>
-                        <p class="header__desc">A brilliant, modular agency template for startup’s build yours toady.</p>
-                        <div class="header__action">
-                            <a href="" class="btn header__btn">Get in touch</a>
-                           <img src="./assets/icon/play button (1).svg" alt="" class="btn__play">
-                            <span class="btn__play--desc">Watch Video</span>
-                        </div>
-                        <div class="header__rotation">
-                            <img src="./assets/img/bong-header.png" alt="" class="rotation">
-                        </div>
-                    </div>
-                    <div class="header__right">
-                        <div class="header__images">
-                            <img src="./assets/img/header1.jpg" alt="" class="header__img header__img--1">
-                            <img src="./assets/img/header2.jpg" alt="" class="header__img header__img--2">
-                            <img src="./assets/img/header2.jpg" alt="" class="header__img">
-                        </div>
-                    </div>
-                    <div class="header__swirl">
-                        <img src="./assets/icon/Vector 2639.svg" alt="" class="swirl">
-                    </div> 
-                    <div class="header__rotation--right">
-                        <img src="./assets/img/" alt="" class="rotation__right">
-                    </div> 
-                </div>
-            </div>
-        </div>
-        <!--BRAND-->
-        <div class="brand">
-            <div class="container">
-               <div class="brand__logo">
-                <p class="brand__gg">Google</p>
-                    <img src="./assets/icon/slack.svg" alt="" class="slack__logo brand__logo--left">
-                    <p class="slack__desc">slack</p>
-                    <img src="./assets/icon/ag.svg" alt="" class="ag__logo brand__logo--left">
-                    <p class="ag__desc">Agworld</p>
-                    <img src="./assets/icon/her.svg" alt="" class="her__logo brand__logo--left">
-                    <p class="her__desc">HEROKU</p>
-                </div>
-                </div>
-                </div>
-               </div>
-            </div>
-        </div>
-        <div class="brand__swirl">
-            <img src="./assets/img/bong-header.png" alt="" class="brand-swirl">
-        </div> 
-        <!--SERVICES-->
-        <div class="services">
-            <div class="container">
-                <div class="services-row">
-                    <div class="services-top">
-                        <h2 class="services__heading" data-aos="zoom-in-right">We offer a wide range of design services</h2>
-                        <div class="underline"></div>
-                        <div class="services__arrow">
-                        </div>
-                    </div>
-                    <div class="services-body">
-                        <div class="services__list" data-aos="fade-down"
-                        data-aos-easing="linear"
-                        data-aos-duration="1500">
-                            <img src="./assets/img/ser1.png" alt="" class="services__list--img">
-                            <h3 class="services__list--heading">Branding</h3>
-                            <p class="services__list--desc">Create beautiful Agency website with 
-                                Boluethat converts more visitors than 
-                                any website.</p>
-                        </div>
-                        <div class="services__list" data-aos="fade-down"
-                        data-aos-easing="linear"
-                        data-aos-duration="1500">
-                            <img src="./assets/img/ser2.png" alt="" class="services__list--img">
-                            <h3 class="services__list--heading">Web Design</h3>
-                            <p class="services__list--desc">Create beautiful Agency website with 
-                                Boluethat converts more visitors than 
-                                any website.</p>
-                        </div>
-                        <div class="services__list services__list--boxshadow" data-aos="fade-down"
-                        data-aos-easing="linear"
-                        data-aos-duration="1500">
-                            <img src="./assets/img/ser1.png" alt="" class="services__list--img">
-                            <h3 class="services__list--heading">Graphic Design</h3>
-                            <p class="services__list--desc">Create beautiful Agency website with 
-                                Boluethat converts more visitors than 
-                                any website.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--ABOUT-->
-        <div class="about">
-            <div class="container">
-                <div class="about-row">
-                    <div class="about-img">
-                        <div class="about__img about__img--1" data-aos="flip-left"
-                        data-aos-easing="ease-out-cubic"
-                        data-aos-duration="2000">
-                            <img src="./assets/img/header1.jpg" alt="" class="img-1">
-                        </div>
-                        <div class="about__img about__img--2" data-aos="flip-left"
-                        data-aos-easing="ease-out-cubic"
-                        data-aos-duration="2000">
-                            <img src="./assets/img/header2.jpg" alt="" class="img-2">
-                        </div>
-                        <div class="about__img about__img--3" data-aos="flip-left"
-                        data-aos-easing="ease-out-cubic"
-                        data-aos-duration="2000">
-                            <img src="./assets/img/header2.jpg" alt="" class="img-3">
-                        </div>
-                    </div>
-                    <div class="about-body">
-                        <h2 class="about__body--heading">We are an extention of your creative team</h2>
-                        <p class="about__body--desc">At the start of every project, we cusomizea detailed project plan together with you set exectationns ensure alighment and define key milestones and deiverbles.</p>
-                        <div class="about__body--subdesc">
-                            <p class="about-phantram">48%</p>
-                            <p class="about__subdesc">Are you strive for two things in design simplicity and clarity. Great design is born of those two things 
-                            </p>
-                        </div>
-                        <div class="about__underline"></div>
-                        <div class="about__body--subdesc">
-                            <p class="about-phantram">26%</p>
-                            <p class="about__subdesc">Are you strive for two things in design simplicity and clarity. Great design is born of those two things 
-                            </p>
-                        </div>
-                        <div class="about__underline"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--PROCESS-->
-        <div class="process">
-            <div class="container">
-                <h2 class="process-heading">A simple ,yet effective three step process</h2>
-                <div class="process__heading--inderline"></div>
-                <div class="process-img">
-                    <p class="process-stt">01.</p>
-                    <div class="process__idea">
-                        <p class="process-substt">Project idea</p>
-                        <a href="" class="process__subidea">Learn More</a>
-                    </div>
-                    <img src="./assets/img/process.png" alt="" class="process__img">
-                </div>
-                <div class="process-img process-other">
-                    <p class="process-stt">02.</p>
-                    <div class="process__idea">
-                        <p class="process-substt">Brainstormaing</p>
-                    </div>
-                    <p class="process-descstt">We customse a ensure aligment and difine key mileones and defiverables experience tells us the best solutions are the ones  deated with clients.</p>
-                </div>
-                <div class="process-underline"></div>
-                <div class="process-img process-other">
-                    <p class="process-stt">03.</p>
-                    <div class="process__idea">
-                        <p class="process-substt">Execution</p>
-                    </div>
-                    <p class="process-descstt">We customse a ensure aligment and difine key mileones and defiverables experience tells us the best solutions are the ones  deated with clients.</p>
-                </div>
-                <div class="process-underline"></div>
-            </div>
-        </div>
-        <!--PROJECTS-->
-        <div class="projects">
-            <div class="container">
-                <div class="projects-row">
-                    <div class="projects-top">
-                        <div class="projects__heading">
-                        <h2 class="projects-heading">A quick glance of our past projects</h2>
-                        <div class="projects-underline"></div>
-                        </div>
-                        <div class="projects__heading">
-                            <p class="projects-heading-desc">Are you strive for the fast project simplicity and clarity. Great 
-                                design is born of those two things. 
-                                </p>
-                            <a href="" class="projects-heading-subdesc">Browse all Projects</a>
-                            </div>
-                    </div>
-                    <div class="projects__clip">
-                        <img src="./assets/img/project.png" alt="" class="clip-img">
-                        <img src="./assets/icon/play button (1).svg" alt="" class="projects-play">
-                        <img src="./assets/icon/Vector 2639.svg" alt="" class="projects-wirl">
-                        <img src="./assets/icon/Vector 2640.svg" alt="" class="projects-wirl projects-wirl-bot">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--FEATURES-->
-        <div class="features">
-            <div class="container">
-                <div class="features-row">
-                    <div class="features__top">
-                        <h2 class="features__heading">Share the features that help your customers</h2>
-                        <p class="features__desc">You already know that the customer experience doesn't end with a sale — it's an ongoing work in progress that companies should be constantly seeking to improve and iterate on.</p>
-                    </div>
-                    <div class="features__body">
-                        <div class="features-list">
-                            <img src="./assets/icon/features1.svg" alt="" class="features__list--img">
-                            <p class="features__list--desc">Blog</p>
-                            <p class="features__list--subdesc">We’ve researched numerous agencies and complied a list of digital marketing agency blogs you should read to stay ahead of your rivals and succeed online!</p>
-                        </div>
-                        <div class="features-list features-list-boxshadow">
-                            <img src="./assets/icon/features2.svg" alt="" class="features__list--img">
-                            <p class="features__list--desc">Documention</p>
-                            <p class="features__list--subdesc">In this article, we discuss the different types of documentation, what makes for great technical documentation, and provide examples.</p>
-                        </div>
-                        <div class="features-list">
-                            <img src="./assets/icon/features3.svg" alt="" class="features__list--img">
-                            <p class="features__list--desc">Customers</p>
-                            <p class="features__list--subdesc">Your customers have high expectations — and if your business can't meet them, they're going to leave you for your competitors.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--BLOG-->
-        <div class="blog">
-            <div class="container">
-                <div class="blog-top">
-                    <h2 class="blog__heading">Take a look at our latest articles and resources</h2>
-                    <div class="underline blog__inderline"></div>
-                    <p class="blog__desc">The best agency are the ones ideated with clients. we corporate your ideas with memorable</p>
-                </div>
-                <div class="blog-body">
-                    <div class="blog-list">
-                        <img src="./assets/img/blog1.png" alt="" class="blog-img">
-                        <a href="" class="blog-btn">STORIES</a>
-                        <p class="blog-desc">What did we learn from nunning over 100 design sprints in less the year?</p>
-                        <div class="blog-underline"></div>
-                        <p class="blog-date">JANUARY 29, 2022</p>
-                    </div>
-                    <div class="blog-list blog__list--other">
-                        <img src="./assets/img/blog2.png" alt="" class="blog-img">
-                        <a href="" class="blog-btn">STORIES</a>
-                        <p class="blog-desc">The difference between the UI/UX design a simple guide for beginner’s</p>
-                        <div class="blog-underline"></div>
-                        <p class="blog-date">JANUARY 29, 2022</p>
-                    </div>
-                    <div class="blog-list">
-                        <img src="./assets/img/blog3.png" alt="" class="blog-img">
-                        <a href="" class="blog-btn">STORIES</a>
-                        <p class="blog-desc">How marketing can help your business more than anything.</p>
-                        <div class="blog-underline"></div>
-                        <p class="blog-date">JANUARY 29, 2022</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!--FOOTER-->
-        <footer class="footer">
-            <div class="container">
-                <div class="footer-body">
-                    <div class="footer-left">
-                        <h2 class="footer-heading">Sign up for our newsletter</h2>
-                        <div class="footer__email">
-                            <a href="" class="footer__email--enter">Enter your email</a>
-                            <img src="./assets/icon/footer-vector.svg" alt="" class="footer__email--row">
-                        </div>
-                        <div class="footer__underline"></div>
-                        <div class="footer__contact">
-                            <div class="footer__logo">
-                                <a href=""> <img src="./assets/icon/f.svg" alt="" class="footer__logo--img"></a>
-                            </div>
-                            <div class="footer__logo">
-                                <a href=""> <img src="./assets/icon/f.svg" alt="" class="footer__logo--img"></a>
-                            </div>
-                            <div class="footer__logo">
-                                <a href=""> <img src="./assets/icon/f.svg" alt="" class="footer__logo--img"></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="footer-right">
-                        <div class="footer__list">
-                            <h3 class="footer__list--item">Pages</h3>
-                            <p class="footer__list--subitem">Home</p>
-                            <p class="footer__list--subitem">About</p>
-                            <p class="footer__list--subitem">Blog</p>
-                            <p class="footer__list--subitem">Blog Post</p>
-                        </div>
-                        <div class="footer__list">
-                            <h3 class="footer__list--item">Product</h3>
-                            <p class="footer__list--subitem">Home</p>
-                            <p class="footer__list--subitem">About</p>
-                            <p class="footer__list--subitem">Blog</p>
-                            <p class="footer__list--subitem">Blog Post</p>
-                        </div>
-                        <div class="footer__list">
-                           <h3 class="footer__list--item">Overview</h3>
-                            <p class="footer__list--subitem">Home</p>
-                            <p class="footer__list--subitem">About</p>
-                            <p class="footer__list--subitem">Blog</p>
-                            <p class="footer__list--subitem">Blog Post</p>
-                        </div>
-                        <div class="footer__list">
-                           <h3 class="footer__list--item">About us</h3>
-                            <p class="footer__list--subitem">Home</p>
-                            <p class="footer__list--subitem">About</p>
-                            <p class="footer__list--subitem">Blog</p>
-                            <p class="footer__list--subitem">Blog Post</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="footer__underline--bottom"></div>
-            </div>
-        </footer>
-    </main>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init();
-      </script>
+
+  <h2>Quản Lý Mượn / Trả Máy Tính</h2>
+
+  <div class="form-group">
+    <label>Họ tên:</label>
+    <input type="text" id="name">
+  </div>
+
+  <div class="form-group">
+    <label>Bộ phận:</label>
+    <input type="text" id="department">
+  </div>
+
+  <div class="form-group">
+    <label>Mã máy (barcode):</label>
+    <input type="text" id="barcode">
+  </div>
+
+  <div class="button-group">
+    <button onclick="addEntry('Mượn')">📥 Mượn Máy</button>
+    <button onclick="addEntry('Trả')">📤 Trả Máy</button>
+    <button onclick="exportToExcel()">📄 Xuất Excel</button>
+    <button onclick="deleteSelected()">🗑️ Xóa Dòng Đã Chọn</button>
+    <button onclick="showAdminPrompt()">🧹 Xóa Tất Cả (Admin)</button>
+  </div>
+
+  <video id="video"></video>
+
+  <table id="logTable">
+    <thead>
+      <tr>
+        <th>Chọn</th>
+        <th>STT</th>
+        <th>Họ tên</th>
+        <th>Bộ phận</th>
+        <th>Mã máy</th>
+        <th>Thời gian</th>
+        <th>Trạng thái</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Hộp nhập mật khẩu ẩn -->
+  <div id="adminPrompt" style="display:none; margin-top: 20px;">
+    <label>Nhập mật khẩu  QUẢN TRỊ để xóa tất cả:</label>
+    <input type="password" id="adminPassword">
+    <button onclick="clearAll()">Xác nhận</button>
+    <button onclick="hideAdminPrompt()">Hủy</button>
+  </div>
+
+  <script>
+    let entries = [];
+    let count = 1;
+    const adminPassword = "admin789"; // ✅ bạn có thể đổi mật khẩu ở đây
+
+    window.onload = function () {
+      const saved = localStorage.getItem("entries");
+      if (saved) {
+        entries = JSON.parse(saved);
+        entries.forEach(renderEntry);
+        count = entries.length + 1;
+      }
+    };
+
+    function addEntry(status) {
+      const name = document.getElementById("name").value.trim();
+      const dept = document.getElementById("department").value.trim();
+      const barcode = document.getElementById("barcode").value.trim();
+      const time = new Date().toLocaleString();
+
+      if (!name || !dept || !barcode) {
+        alert("Vui lòng nhập đầy đủ thông tin.");
+        return;
+      }
+
+      const entry = { name, dept, barcode, time, status };
+      entries.push(entry);
+      saveData();
+      renderEntry(entry);
+      document.getElementById("barcode").value = "";
+    }
+
+    function renderEntry(entry) {
+      const tbody = document.querySelector("#logTable tbody");
+      const row = tbody.insertRow();
+
+      const checkboxCell = row.insertCell(0);
+      checkboxCell.innerHTML = `<input type="checkbox" class="row-check">`;
+
+      row.insertCell(1).textContent = count++;
+      row.insertCell(2).textContent = entry.name;
+      row.insertCell(3).textContent = entry.dept;
+      row.insertCell(4).textContent = entry.barcode;
+      row.insertCell(5).textContent = entry.time;
+      row.insertCell(6).textContent = entry.status;
+    }
+
+    function saveData() {
+      localStorage.setItem("entries", JSON.stringify(entries));
+    }
+
+    function exportToExcel() {
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.table_to_sheet(document.getElementById("logTable"));
+      XLSX.utils.book_append_sheet(wb, ws, "MuonTraMay");
+      XLSX.writeFile(wb, "danh_sach_muon_tra.xlsx");
+    }
+
+    function deleteSelected() {
+      const checkboxes = document.querySelectorAll(".row-check");
+      const newEntries = [];
+      const newTableBody = document.querySelector("#logTable tbody");
+      newTableBody.innerHTML = "";
+      count = 1;
+
+      entries.forEach((entry, index) => {
+        if (!checkboxes[index].checked) {
+          newEntries.push(entry);
+          renderEntry(entry);
+        }
+      });
+
+      entries = newEntries;
+      saveData();
+    }
+
+    function showAdminPrompt() {
+      document.getElementById("adminPrompt").style.display = "block";
+    }
+
+    function hideAdminPrompt() {
+      document.getElementById("adminPrompt").style.display = "none";
+      document.getElementById("adminPassword").value = "";
+    }
+
+    function clearAll() {
+      const input = document.getElementById("adminPassword").value;
+      if (input === adminPassword) {
+        if (confirm("Bạn có chắc muốn xóa tất cả dữ liệu?")) {
+          localStorage.removeItem("entries");
+          location.reload();
+        }
+      } else {
+        alert("❌ Sai mật khẩu admin.");
+      }
+    }
+
+    // Quét barcode bằng webcam
+    const video = document.getElementById("video");
+    const scanner = new QrScanner(video, result => {
+      document.getElementById("barcode").value = result;
+    });
+    scanner.start();
+  </script>
 </body>
 </html>
