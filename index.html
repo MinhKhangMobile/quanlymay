@@ -1,245 +1,949 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Quản Lý Mượn / Trả Máy Tính</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #e1eefc;
-      padding: 30px;
-    }
-
-    h2 {
-      text-align: center;
-      color: #2c3e50;
-    }
-
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    label {
-      font-weight: bold;
-      margin-bottom: 5px;
-      display: block;
-    }
-
-    input[type="text"], input[type="password"] {
-      width: 30%;
-      padding: 8px;
-      border: 2px solid #a1acec;
-      border-radius: 10px;
-    }
-
-    .button-group {
-      margin-top: 15px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    button {
-      padding: 10px 18px;
-      background-color: #3498db;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #2980b9;
-    }
-
-    #video {
-      margin-top: 20px;
-      width: 200px;
-      border: 1px solid #ccc;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 25px;
-      background: white;
-    }
-
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: center;
-    }
-
-    th {
-      background-color: #3498db;
-      color: white;
-    }
-
-    td input[type="checkbox"] {
-      transform: scale(1.2);
-    }
-  </style>
-
-  <!-- Thư viện -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qr-scanner/1.4.2/qr-scanner.umd.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>esprintavn — Quản lý thiết bị (Demo)</title>
+<meta name="description" content="Dashboard quản lý thiết bị - demo client-only (localStorage). Admin có quyền xóa lịch sử." />
+<style>
+  /* ---------------------------
+     White-dominant Dashboard theme
+     - Primary: white cards / light UI
+     - Accent: charcoal + teal
+     --------------------------- */
+  :root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --muted:#6b7280;
+    --accent:#0f1724;    /* dark */
+    --accent-2:#0ea5a4;  /* teal accent */
+    --danger:#ef4444;
+    --success:#16a34a;
+    --radius:12px;
+    font-family: Inter, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--accent);-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  /* Layout */
+  .app{display:flex;min-height:100vh}
+  /* Sidebar */
+  .sidebar{width:260px;background:linear-gradient(180deg, #ffffff, #fbfcfe);box-shadow:2px 0 12px rgba(15,23,36,0.04);padding:20px;display:flex;flex-direction:column;gap:18px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand .logo{width:48px;height:48px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800}
+  .brand h2{margin:0;font-size:16px}
+  .brand p{margin:0;font-size:12px;color:var(--muted)}
+  .nav{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+  .nav button{display:flex;align-items:center;gap:8px;padding:10px;border-radius:10px;border:0;background:transparent;color:var(--accent);cursor:pointer;text-align:left;font-weight:600}
+  .nav button.active{background:linear-gradient(90deg,var(--accent-2),#38bdf8);color:#fff}
+  .side-footer{margin-top:auto;font-size:12px;color:var(--muted)}
+  /* Main area */
+  .main{flex:1;display:flex;flex-direction:column}
+  .topbar{height:72px;padding:12px 20px;display:flex;align-items:center;gap:12px;background:transparent;justify-content:space-between}
+  .searchbox{display:flex;gap:8px;align-items:center;background:#fff;padding:8px;border-radius:10px;box-shadow:0 1px 2px rgba(15,23,36,0.04)}
+  .searchbox input{border:0;outline:none;font-size:14px}
+  .userbox{display:flex;gap:10px;align-items:center}
+  .user-avatar{width:40px;height:40px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+  /* Content */
+  .content{padding:20px;display:grid;grid-template-columns:1fr 360px;gap:18px}
+  .card{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 6px 18px rgba(15,23,36,0.04)}
+  .card h3{margin:0 0 10px 0}
+  /* Device table */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead th{color:var(--muted);text-align:left;padding:12px;border-bottom:1px solid #eef2f6;font-weight:700}
+  tbody td{padding:12px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+  .device-name{font-weight:700}
+  .meta-muted{font-size:13px;color:var(--muted)}
+  .status{display:inline-block;padding:6px 10px;border-radius:999px;font-size:13px;font-weight:700}
+  .st-active{background:rgba(16,185,129,0.12);color:var(--success)}
+  .st-moved{background:rgba(59,130,246,0.08);color:#2563eb}
+  .st-destroy{background:rgba(239,68,68,0.08);color:var(--danger)}
+  .actions button{margin-left:6px}
+  /* Right column (detail) */
+  .detail .thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .thumb{width:84px;height:64px;border-radius:8px;background:#f8fafc;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #eef2f6;position:relative}
+  .thumb img{width:100%;height:100%;object-fit:cover}
+  .thumb .fname{font-size:12px;padding:6px}
+  .small-muted{font-size:13px;color:var(--muted)}
+  .history-list{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+  .hist-item{padding:10px;border-radius:8px;background:#fbfcff;border:1px solid #f1f5f9;display:flex;justify-content:space-between;gap:10px;align-items:center}
+  .hist-left{font-size:14px}
+  .hist-right{display:flex;gap:8px;align-items:center}
+  .badge{padding:6px 8px;border-radius:8px;background:#f1f5f9;font-weight:700;font-size:13px}
+  /* Buttons */
+  .btn{padding:8px 12px;border-radius:8px;border:0;background:var(--accent-2);color:#fff;font-weight:700;cursor:pointer}
+  .btn.ghost{background:transparent;border:1px solid #e6eef8;color:var(--accent)}
+  .btn.danger{background:linear-gradient(90deg,#f97316,#ef4444);box-shadow:none}
+  /* Modals */
+  .overlay{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:60}
+  .overlay.open{display:flex}
+  .modal{width:900px;max-width:100%;background:var(--card);border-radius:12px;padding:16px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  label{display:block;font-size:13px;margin-bottom:6px;color:var(--muted)}
+  input[type=text], input[type=date], select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8;background:#fff}
+  textarea{min-height:100px;resize:vertical}
+  .uploader{border:1px dashed #e6eef8;padding:10px;border-radius:8px;text-align:center;background:#fbfcff}
+  /* Login page */
+  .center-screen{height:100vh;display:flex;align-items:center;justify-content:center}
+  .login-card{width:420px;background:var(--card);border-radius:12px;padding:20px;box-shadow:0 12px 40px rgba(15,23,36,0.06)}
+  .muted{color:var(--muted)}
+  /* responsive */
+  @media(max-width:1000px){
+    .app{flex-direction:column}
+    .sidebar{width:100%;flex-direction:row;overflow:auto;padding:12px}
+    .brand h2{display:none}
+    .main{width:100%}
+    .content{grid-template-columns:1fr}
+  }
+</style>
 </head>
 <body>
+<div class="app" id="appRoot">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">ES</div>
+      <div>
+        <h2>esprintavn</h2>
+        <p class="muted">Asset Management</p>
+      </div>
+    </div>
 
-  <h2>Quản Lý Mượn / Trả Máy Tính</h2>
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <button id="navDashboard" class="active">Dashboard</button>
+      <button id="navDevices">Thiết bị</button>
+      <button id="navHistory">Tìm lịch sử</button>
+      <button id="navUsers" class="admin-only">Quản lý người dùng</button>
+    </nav>
+  </aside>
 
-  <div class="form-group">
-    <label>Họ tên:</label>
-    <input type="text" id="name">
+  <!-- MAIN -->
+  <main class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="searchbox" style="width:420px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:.6"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <input id="globalSearch" placeholder="Tìm theo mã, tên, bộ phận, serial..." />
+        </div>
+      </div>
+
+      <div class="userbox">
+        <div class="small-muted" id="roleHint">—</div>
+        <div class="user-avatar" id="userAvatar">U</div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end">
+          <div id="userName">—</div>
+          <div class="muted" style="font-size:12px"><a href="#" id="btnLogoutTop">Đăng xuất</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <section class="content" id="contentArea">
+      <!-- LEFT: Main Panel -->
+      <div>
+        <!-- DASHBOARD overview -->
+        <div id="viewDashboard" class="card" style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Dashboard</h3>
+            <div class="small-muted" id="dashboardTime">—</div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:12px">
+            <div style="flex:1" class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div class="muted">Tổng thiết bị</div>
+                  <div style="font-size:22px;font-weight:800" id="statTotal">0</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="muted">Hoạt động</div>
+                  <div style="font-size:18px;color:var(--success);font-weight:800" id="statActive">0</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1" class="card">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div class="muted">Đã di chuyển</div>
+                  <div style="font-size:22px;font-weight:800" id="statMoved">0</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="muted">Đã hủy</div>
+                  <div style="font-size:18px;color:var(--danger);font-weight:800" id="statDestroyed">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DEVICES view -->
+        <div id="viewDevices" class="card" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Danh sách thiết bị</h3>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select id="filterStatus">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="Đang hoạt động">Đang hoạt động</option>
+                <option value="Đã di chuyển">Đã di chuyển</option>
+                <option value="Đã hủy">Đã hủy</option>
+              </select>
+              <button class="btn" id="btnNewDevice">Thêm thiết bị</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;overflow:auto">
+            <table id="tblDevices">
+              <thead>
+                <tr><th>Thiết bị</th><th>Bộ phận</th><th>Trạng thái</th><th>Ngày</th><th></th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- HISTORY search view -->
+        <div id="viewHistory" class="card" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Tìm lịch sử thay đổi</h3>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="histSearch" placeholder="Tìm theo mô tả, bộ phận, người thực hiện..." style="padding:8px;border-radius:8px;border:1px solid #eef2f6" />
+              <select id="histFilterDevice"><option value="">Tất cả thiết bị</option></select>
+            </div>
+          </div>
+
+          <div class="history-list" id="historyResults" style="margin-top:12px"></div>
+        </div>
+
+        <!-- USERS management (admin) -->
+        <div id="viewUsers" class="card" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Quản lý người dùng</h3>
+            <button class="btn" id="btnNewUser">Thêm người dùng</button>
+          </div>
+          <div style="margin-top:12px;overflow:auto">
+            <table id="tblUsers">
+              <thead><tr><th>Tên</th><th>Email</th><th>Vai trò</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Detail -->
+      <aside>
+        <div id="detailPanel" class="card">
+          <h3 id="detailTitle">Chi tiết thiết bị</h3>
+          <div id="detailEmpty" class="small-muted">Chọn 1 thiết bị để xem chi tiết</div>
+
+          <div id="detailContent" style="display:none">
+            <div class="small-muted" id="detailMeta"></div>
+            <p id="detailNotes" class="small-muted" style="margin-top:8px"></p>
+
+            <div style="margin-top:12px">
+              <h4 style="margin:6px 0">Tệp đính kèm</h4>
+              <div class="thumbs" id="detailThumbs"></div>
+            </div>
+
+            <div style="margin-top:12px">
+              <h4 style="margin:6px 0">Lịch sử</h4>
+              <div class="history-list" id="detailHistory"></div>
+            </div>
+
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+              <button class="btn" id="detailAddHistory">Thêm lịch sử</button>
+              <button class="btn admin-only" id="detailEdit">Chỉnh sửa</button>
+              <button class="btn danger admin-only" id="detailDeleteHistory">Xóa lịch sử (admin)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h4>Hành động nhanh</h4>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <button class="btn" id="exportAll">Xuất toàn bộ JSON</button>
+            <button class="btn ghost" id="importBtn">Nhập JSON</button>
+            <input type="file" id="importFile" style="display:none" accept="application/json" />
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+</div>
+
+<!-- OVERLAYS / MODALS -->
+<div class="overlay" id="overlayDevice">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalDeviceTitle">
+    <h3 id="modalDeviceTitle">Thêm / Chỉnh sửa thiết bị</h3>
+    <form id="formDevice" class="form-grid" style="margin-top:8px">
+      <div>
+        <label>Tên thiết bị</label>
+        <input id="d_name" type="text" required />
+      </div>
+      <div>
+        <label>Mã thiết bị</label>
+        <input id="d_code" type="text" required />
+      </div>
+      <div>
+        <label>Bộ phận</label>
+        <input id="d_dept" type="text" />
+      </div>
+      <div>
+        <label>Trạng thái</label>
+        <select id="d_status">
+          <option>Đang hoạt động</option>
+          <option>Đã di chuyển</option>
+          <option>Đã hủy</option>
+        </select>
+      </div>
+      <div>
+        <label>Serial / S/N</label>
+        <input id="d_serial" type="text" />
+      </div>
+      <div>
+        <label>Ngày (yyyy-mm-dd)</label>
+        <input id="d_date" type="date" />
+      </div>
+      <div style="grid-column:1/3">
+        <label>Ghi chú</label>
+        <textarea id="d_notes"></textarea>
+      </div>
+      <div style="grid-column:1/3">
+        <label>Đính kèm (ảnh / pdf)</label>
+        <div class="uploader">
+          <input id="d_files" type="file" multiple accept="image/*,.pdf" />
+          <div class="thumbs" id="d_previews"></div>
+        </div>
+      </div>
+
+      <div style="grid-column:1/3;display:flex;justify-content:flex-end;gap:8px;margin-top:6px">
+        <button type="button" class="btn ghost" id="closeDevice">Đóng</button>
+        <button type="submit" class="btn" id="saveDevice">Lưu</button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <div class="form-group">
-    <label>Bộ phận:</label>
-    <input type="text" id="department">
+<div class="overlay" id="overlayHistory">
+  <div class="modal">
+    <h3>Thêm lịch sử</h3>
+    <form id="formHistory" style="margin-top:8px">
+      <label>Mô tả</label>
+      <input id="h_text" type="text" required />
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        <button type="button" class="btn ghost" id="closeHistory">Đóng</button>
+        <button type="submit" class="btn">Lưu</button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <div class="form-group">
-    <label>Mã máy (barcode):</label>
-    <input type="text" id="barcode">
+<div class="overlay" id="overlayUser">
+  <div class="modal">
+    <h3>Thêm người dùng</h3>
+    <form id="formUser" style="margin-top:8px">
+      <label>Tên</label>
+      <input id="u_name" type="text" required />
+      <label>Email</label>
+      <input id="u_email" type="text" required />
+      <label>Mật khẩu</label>
+      <input id="u_pass" type="text" required />
+      <label>Vai trò</label>
+      <select id="u_role"><option value="user">User</option><option value="admin">Admin</option></select>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+        <button type="button" class="btn ghost" id="closeUser">Đóng</button>
+        <button type="submit" class="btn">Lưu</button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <div class="button-group">
-    <button onclick="addEntry('Mượn')">📥 Mượn Máy</button>
-    <button onclick="addEntry('Trả')">📤 Trả Máy</button>
-    <button onclick="exportToExcel()">📄 Xuất Excel</button>
-    <button onclick="deleteSelected()">🗑️ Xóa Dòng Đã Chọn</button>
-    <button onclick="showAdminPrompt()">🧹 Xóa Tất Cả (Admin)</button>
+<!-- LOGIN PAGE (full-screen overlay style for first load) -->
+<div id="loginScreen" class="center-screen" style="display:none">
+  <div class="login-card">
+    <h2>Đăng nhập — esprintavn</h2>
+    <div style="margin-top:12px">
+      <label>Email</label>
+      <input id="login_email" type="text" />
+      <label style="margin-top:8px">Mật khẩu</label>
+      <input id="login_pass" type="password" />
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn" id="loginBtn">Đăng nhập</button>
+        <button class="btn ghost" id="fillUser">Dùng user demo</button>
+      </div>
+      <div id="loginError" style="color:var(--danger);margin-top:8px;display:none"></div>
+    </div>
   </div>
+</div>
 
-  <video id="video"></video>
+<script>
+/* ======================================================
+   esprintavn — Frontend-only Asset Management Demo
+   - Single HTML file
+   - Data stored in localStorage
+   - Roles: admin / user
+   - Admin-only: delete history, manage users
+   - History search, attachments (dataURL)
+   ====================================================== */
 
-  <table id="logTable">
-    <thead>
-      <tr>
-        <th>Chọn</th>
-        <th>STT</th>
-        <th>Họ tên</th>
-        <th>Bộ phận</th>
-        <th>Mã máy</th>
-        <th>Thời gian</th>
-        <th>Trạng thái</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+/* ---------- Storage helpers ---------- */
+const LS_USERS = 'es_users';
+const LS_DEVICES = 'es_devices';
+const Storage = {
+  getUsers(){ return JSON.parse(localStorage.getItem(LS_USERS) || 'null') || null; },
+  setUsers(u){ localStorage.setItem(LS_USERS, JSON.stringify(u)); },
+  getDevices(){ return JSON.parse(localStorage.getItem(LS_DEVICES) || 'null') || []; },
+  setDevices(d){ localStorage.setItem(LS_DEVICES, JSON.stringify(d)); }
+};
 
-  <!-- Hộp nhập mật khẩu ẩn -->
-  <div id="adminPrompt" style="display:none; margin-top: 20px;">
-    <label>Nhập mật khẩu  QUẢN TRỊ để xóa tất cả:</label>
-    <input type="password" id="adminPassword">
-    <button onclick="clearAll()">Xác nhận</button>
-    <button onclick="hideAdminPrompt()">Hủy</button>
-  </div>
+/* ---------- Utility ---------- */
+function uid(){ return 'id-'+Math.random().toString(36).slice(2,10); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function fmt(d){ if(!d) return ''; const x = new Date(d); if(isNaN(x)) return d; return x.toISOString().slice(0,10); }
+function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function readFileAsDataURL(file){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); }); }
 
-  <script>
-    let entries = [];
-    let count = 1;
-    const adminPassword = "admin789"; // ✅ bạn có thể đổi mật khẩu ở đây
+/* ---------- App state ---------- */
+let currentUser = null;
+let devices = [];
+let users = [];
+let currentView = 'Dashboard';
+let currentDetail = null;
+let editingDeviceId = null;
+let editingHistoryTarget = null;
 
-    window.onload = function () {
-      const saved = localStorage.getItem("entries");
-      if (saved) {
-        entries = JSON.parse(saved);
-        entries.forEach(renderEntry);
-        count = entries.length + 1;
-      }
-    };
+/* ---------- Elements ---------- */
+const loginScreen = document.getElementById('loginScreen');
+const login_email = document.getElementById('login_email');
+const login_pass = document.getElementById('login_pass');
+const loginBtn = document.getElementById('loginBtn');
+const fillUser = document.getElementById('fillUser');
+const loginError = document.getElementById('loginError');
 
-    function addEntry(status) {
-      const name = document.getElementById("name").value.trim();
-      const dept = document.getElementById("department").value.trim();
-      const barcode = document.getElementById("barcode").value.trim();
-      const time = new Date().toLocaleString();
+const userName = document.getElementById('userName');
+const userAvatar = document.getElementById('userAvatar');
+const roleHint = document.getElementById('roleHint');
+const btnLogoutTop = document.getElementById('btnLogoutTop');
 
-      if (!name || !dept || !barcode) {
-        alert("Vui lòng nhập đầy đủ thông tin.");
-        return;
-      }
+const navDashboard = document.getElementById('navDashboard');
+const navDevices = document.getElementById('navDevices');
+const navHistory = document.getElementById('navHistory');
+const navUsers = document.getElementById('navUsers');
 
-      const entry = { name, dept, barcode, time, status };
-      entries.push(entry);
-      saveData();
-      renderEntry(entry);
-      document.getElementById("barcode").value = "";
+const viewDashboard = document.getElementById('viewDashboard');
+const viewDevices = document.getElementById('viewDevices');
+const viewHistory = document.getElementById('viewHistory');
+const viewUsers = document.getElementById('viewUsers');
+
+const statTotal = document.getElementById('statTotal');
+const statActive = document.getElementById('statActive');
+const statMoved = document.getElementById('statMoved');
+const statDestroyed = document.getElementById('statDestroyed');
+
+const tblDevicesBody = document.querySelector('#tblDevices tbody');
+const filterStatus = document.getElementById('filterStatus');
+const btnNewDevice = document.getElementById('btnNewDevice');
+
+const detailPanel = document.getElementById('detailPanel');
+const detailTitle = document.getElementById('detailTitle');
+const detailEmpty = document.getElementById('detailEmpty');
+const detailContent = document.getElementById('detailContent');
+const detailMeta = document.getElementById('detailMeta');
+const detailNotes = document.getElementById('detailNotes');
+const detailThumbs = document.getElementById('detailThumbs');
+const detailHistory = document.getElementById('detailHistory');
+
+const overlayDevice = document.getElementById('overlayDevice');
+const overlayHistory = document.getElementById('overlayHistory');
+const overlayUser = document.getElementById('overlayUser');
+const formDevice = document.getElementById('formDevice');
+const d_name = document.getElementById('d_name');
+const d_code = document.getElementById('d_code');
+const d_dept = document.getElementById('d_dept');
+const d_status = document.getElementById('d_status');
+const d_serial = document.getElementById('d_serial');
+const d_date = document.getElementById('d_date');
+const d_notes = document.getElementById('d_notes');
+const d_files = document.getElementById('d_files');
+const d_previews = document.getElementById('d_previews');
+const closeDevice = document.getElementById('closeDevice');
+
+const formHistory = document.getElementById('formHistory');
+const h_text = document.getElementById('h_text');
+const closeHistory = document.getElementById('closeHistory');
+
+const tblUsersBody = document.querySelector('#tblUsers tbody');
+const btnNewUser = document.getElementById('btnNewUser');
+const formUser = document.getElementById('formUser');
+const u_name = document.getElementById('u_name');
+const u_email = document.getElementById('u_email');
+const u_pass = document.getElementById('u_pass');
+const u_role = document.getElementById('u_role');
+
+const histSearch = document.getElementById('histSearch');
+const histFilterDevice = document.getElementById('histFilterDevice');
+const historyResults = document.getElementById('historyResults');
+
+const globalSearch = document.getElementById('globalSearch');
+const navButtons = [navDashboard, navDevices, navHistory, navUsers];
+
+/* ---------- Init seed ---------- */
+function seed(){
+  if(!Storage.getUsers()){
+    const seedUsers = [
+      {id: uid(), name:'Admin', email:'admin@local', password:'admin123', role:'admin'},
+      {id: uid(), name:'User', email:'user@local', password:'user123', role:'user'}
+    ];
+    Storage.setUsers(seedUsers);
+  }
+  if(Storage.getDevices().length===0){
+    const seedDevices = [
+      {id:uid(), name:'Laptop Dell XPS 13', code:'TB-001', dept:'Phòng Kỹ thuật', status:'Đã di chuyển', date:'2025-09-10', serial:'DX13-2381', notes:'Di chuyển để nâng cấp SSD.', attachments:[], history:[{id:uid(), ts:'2025-09-10', desc:'Di chuyển → R&D', by:'Nguyễn A'}]},
+      {id:uid(), name:'Server Rack - Unit 4', code:'TB-022', dept:'Data Center', status:'Đã hủy', date:'2025-07-15', serial:'SR4', notes:'Hủy theo biên bản', attachments:[], history:[{id:uid(), ts:'2025-07-15', desc:'Hủy thiết bị', by:'Kỹ thuật'}]},
+      {id:uid(), name:'Printer HP M477', code:'TB-010', dept:'Văn phòng', status:'Đang hoạt động', date:'2023-12-01', serial:'HP-477', notes:'Đang sử dụng', attachments:[], history:[{id:uid(), ts:'2023-12-01', desc:'Đưa vào sử dụng', by:'Hành chính'}]}
+    ];
+    Storage.setDevices(seedDevices);
+  }
+}
+
+/* ---------- App logic ---------- */
+function boot(){
+  seed();
+  users = Storage.getUsers();
+  devices = Storage.getDevices();
+  showLogin();
+  bind();
+  renderDashboardStats();
+  populateHistDeviceFilter();
+  document.getElementById('dashboardTime').textContent = new Date().toLocaleString();
+}
+
+function bind(){
+  loginBtn.addEventListener('click', onLogin);
+  fillUser.addEventListener('click', ()=>{ login_email.value='user@local'; login_pass.value='user123'; });
+  btnLogoutTop.addEventListener('click', onLogout);
+
+  navDashboard.addEventListener('click', ()=>switchView('Dashboard'));
+  navDevices.addEventListener('click', ()=>switchView('Devices'));
+  navHistory.addEventListener('click', ()=>switchView('History'));
+  navUsers.addEventListener('click', ()=>switchView('Users'));
+
+  btnNewDevice.addEventListener('click', ()=>openDeviceModal());
+  closeDevice.addEventListener('click', ()=>closeModal('overlayDevice'));
+  formDevice.addEventListener('submit', onSaveDevice);
+  d_files.addEventListener('change', onDeviceFiles);
+
+  document.getElementById('btnNewUser').addEventListener('click', ()=>openModal('overlayUser'));
+  document.getElementById('closeUser').addEventListener('click', ()=>closeModal('overlayUser'));
+  formUser.addEventListener('submit', onSaveUser);
+
+  formHistory.addEventListener('submit', onSaveHistory);
+  closeHistory.addEventListener('click', ()=>closeModal('overlayHistory'));
+
+  filterStatus.addEventListener('change', renderDeviceTable);
+  btnNewUser.addEventListener('click', ()=>openModal('overlayUser'));
+
+  // users table
+  document.getElementById('exportAll').addEventListener('click', exportAllJSON);
+  document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
+  document.getElementById('importFile').addEventListener('change', onImportFile);
+
+  histSearch.addEventListener('input', renderHistoryResults);
+  histFilterDevice.addEventListener('change', renderHistoryResults);
+
+  globalSearch.addEventListener('input', ()=>{ renderDeviceTable(); renderHistoryResults(); });
+
+  // quick nav from table click handled in render
+}
+
+/* ---------- Auth ---------- */
+function showLogin(){
+  loginScreen.style.display = 'flex';
+  document.getElementById('appRoot').style.display = 'none';
+}
+function showApp(){
+  loginScreen.style.display = 'none';
+  document.getElementById('appRoot').style.display = 'flex';
+}
+function onLogin(){
+  const email = (login_email.value||'').trim();
+  const pass = (login_pass.value||'').trim();
+  users = Storage.getUsers();
+  const u = users.find(x=>x.email===email && x.password===pass);
+  if(!u){ loginError.textContent = 'Email hoặc mật khẩu không đúng.'; loginError.style.display='block'; return; }
+  loginError.style.display='none';
+  currentUser = u;
+  // show app
+  showApp();
+  updateUserUI();
+  switchView('Dashboard');
+  renderDeviceTable();
+  renderUsersTable();
+  renderHistoryResults();
+}
+function onLogout(e){
+  e && e.preventDefault();
+  currentUser = null;
+  // clear inputs
+  login_email.value=''; login_pass.value='';
+  showLogin();
+}
+
+/* ---------- Views ---------- */
+function switchView(name){
+  currentView = name;
+  // nav highlight
+  navButtons.forEach(b=>b.classList.remove('active'));
+  if(name==='Dashboard') navDashboard.classList.add('active');
+  if(name==='Devices') navDevices.classList.add('active');
+  if(name==='History') navHistory.classList.add('active');
+  if(name==='Users') navUsers.classList.add('active');
+  // show hide
+  viewDashboard.style.display = name==='Dashboard' ? 'block' : 'none';
+  viewDevices.style.display = name==='Devices' ? 'block' : 'none';
+  viewHistory.style.display = name==='History' ? 'block' : 'none';
+  viewUsers.style.display = name==='Users' ? 'block' : 'none';
+}
+
+/* ---------- Renderers ---------- */
+function updateUserUI(){
+  if(!currentUser) return;
+  userName.textContent = currentUser.name;
+  userAvatar.textContent = (currentUser.name||'U').split(' ').map(s=>s[0]).slice(0,2).join('');
+  roleHint.textContent = currentUser.role.toUpperCase();
+  // toggle admin-only
+  document.querySelectorAll('.admin-only').forEach(el => {
+    el.style.display = currentUser.role==='admin' ? 'inline-block' : 'none';
+  });
+}
+
+function renderDashboardStats(){
+  devices = Storage.getDevices();
+  const total = devices.length;
+  const active = devices.filter(d=>d.status==='Đang hoạt động').length;
+  const moved = devices.filter(d=>d.status==='Đã di chuyển').length;
+  const destroyed = devices.filter(d=>d.status==='Đã hủy').length;
+  statTotal.textContent = total;
+  statActive.textContent = active;
+  statMoved.textContent = moved;
+  statDestroyed.textContent = destroyed;
+}
+
+function renderDeviceTable(){
+  devices = Storage.getDevices();
+  const tbody = tblDevicesBody;
+  tbody.innerHTML = '';
+  const query = (globalSearch.value||'').toLowerCase().trim();
+  const statusFilter = filterStatus.value;
+  const filtered = devices.filter(d=>{
+    if(statusFilter!=='all' && d.status !== statusFilter) return false;
+    if(!query) return true;
+    return (d.name||'').toLowerCase().includes(query) || (d.code||'').toLowerCase().includes(query) || (d.dept||'').toLowerCase().includes(query) || (d.serial||'').toLowerCase().includes(query);
+  });
+  filtered.forEach(d=>{
+    const tr = document.createElement('tr');
+    const tdName = document.createElement('td');
+    tdName.innerHTML = `<div style="display:flex;gap:10px;align-items:center">
+      <div style="width:44px;height:44px;border-radius:8px;background:#eef2f6;display:flex;align-items:center;justify-content:center">${escapeHtml((d.name||'').split(' ').map(s=>s[0]).slice(0,2).join(''))}</div>
+      <div>
+        <div class="device-name">${escapeHtml(d.name)}</div>
+        <div class="meta-muted">${escapeHtml(d.code)} • ${escapeHtml(d.serial||'')}</div>
+      </div>
+    </div>`;
+    const tdDept = document.createElement('td'); tdDept.textContent = d.dept || '';
+    const tdStatus = document.createElement('td');
+    const cls = d.status==='Đang hoạt động' ? 'st-active' : (d.status==='Đã di chuyển' ? 'st-moved' : 'st-destroy');
+    tdStatus.innerHTML = `<span class="status ${cls}">${escapeHtml(d.status)}</span>`;
+    const tdDate = document.createElement('td'); tdDate.textContent = fmt(d.date||'');
+    const tdAction = document.createElement('td'); tdAction.style.textAlign='right';
+    const btnView = document.createElement('button'); btnView.className='btn ghost'; btnView.textContent='Xem';
+    btnView.addEventListener('click', ()=>openDetail(d.id));
+    const btnEdit = document.createElement('button'); btnEdit.className='btn'; btnEdit.textContent='Sửa';
+    btnEdit.addEventListener('click', ()=>openDeviceModal(d.id));
+    tdAction.appendChild(btnView); tdAction.appendChild(btnEdit);
+    tr.appendChild(tdName); tr.appendChild(tdDept); tr.appendChild(tdStatus); tr.appendChild(tdDate); tr.appendChild(tdAction);
+    tbody.appendChild(tr);
+  });
+
+  renderDashboardStats();
+}
+
+/* ---------- Detail ---------- */
+function openDetail(id){
+  currentDetail = id;
+  const d = (Storage.getDevices()||[]).find(x=>x.id===id);
+  if(!d) return;
+  detailEmpty.style.display = 'none';
+  detailContent.style.display = 'block';
+  detailTitle.textContent = `${d.name} — ${d.code}`;
+  detailMeta.textContent = `Bộ phận: ${d.dept || '-'} • SN: ${d.serial || '-'} • Trạng thái: ${d.status}`;
+  detailNotes.textContent = d.notes || '';
+  // attachments
+  detailThumbs.innerHTML = '';
+  (d.attachments||[]).forEach(a=>{
+    const div = document.createElement('div'); div.className='thumb';
+    if(a.type && a.type.startsWith('image/')){
+      const img = document.createElement('img'); img.src = a.data; div.appendChild(img);
+    } else {
+      const sp = document.createElement('div'); sp.className='fname'; sp.textContent = a.name; div.appendChild(sp);
     }
-
-    function renderEntry(entry) {
-      const tbody = document.querySelector("#logTable tbody");
-      const row = tbody.insertRow();
-
-      const checkboxCell = row.insertCell(0);
-      checkboxCell.innerHTML = `<input type="checkbox" class="row-check">`;
-
-      row.insertCell(1).textContent = count++;
-      row.insertCell(2).textContent = entry.name;
-      row.insertCell(3).textContent = entry.dept;
-      row.insertCell(4).textContent = entry.barcode;
-      row.insertCell(5).textContent = entry.time;
-      row.insertCell(6).textContent = entry.status;
-    }
-
-    function saveData() {
-      localStorage.setItem("entries", JSON.stringify(entries));
-    }
-
-    function exportToExcel() {
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.table_to_sheet(document.getElementById("logTable"));
-      XLSX.utils.book_append_sheet(wb, ws, "MuonTraMay");
-      XLSX.writeFile(wb, "danh_sach_muon_tra.xlsx");
-    }
-
-    function deleteSelected() {
-      const checkboxes = document.querySelectorAll(".row-check");
-      const newEntries = [];
-      const newTableBody = document.querySelector("#logTable tbody");
-      newTableBody.innerHTML = "";
-      count = 1;
-
-      entries.forEach((entry, index) => {
-        if (!checkboxes[index].checked) {
-          newEntries.push(entry);
-          renderEntry(entry);
-        }
+    // download
+    const link = document.createElement('a'); link.href = a.data; link.download = a.name; link.style.position='absolute'; link.style.left='6px'; link.style.bottom='6px'; link.textContent='⤓';
+    div.appendChild(link);
+    detailThumbs.appendChild(div);
+  });
+  // history
+  detailHistory.innerHTML = '';
+  (d.history||[]).slice().reverse().forEach(h=>{
+    const item = document.createElement('div'); item.className='hist-item';
+    const left = document.createElement('div'); left.className='hist-left'; left.innerHTML = `<div style="font-weight:700">${escapeHtml(h.ts)}</div><div class="small-muted">${escapeHtml(h.desc)}</div><div class="small-muted">Người: ${escapeHtml(h.by||'-')}</div>`;
+    const right = document.createElement('div'); right.className='hist-right';
+    // admin-only delete
+    if(currentUser && currentUser.role==='admin'){
+      const del = document.createElement('button'); del.className='btn ghost'; del.textContent='Xóa'; del.addEventListener('click', ()=>{
+        if(!confirm('Xóa lịch sử này?')) return;
+        const ds = Storage.getDevices();
+        const target = ds.find(x=>x.id===d.id);
+        if(!target) return;
+        const idx = target.history.findIndex(x=>x.id===h.id);
+        if(idx>=0){ target.history.splice(idx,1); Storage.setDevices(ds); openDetail(d.id); renderHistoryResults(); renderDeviceTable(); }
       });
-
-      entries = newEntries;
-      saveData();
+      right.appendChild(del);
     }
+    const addNote = document.createElement('button'); addNote.className='btn ghost'; addNote.textContent='Sao chép'; addNote.addEventListener('click', ()=>{ navigator.clipboard?.writeText(`${h.ts} ${h.desc}`); alert('Đã sao chép'); });
+    right.appendChild(addNote);
+    item.appendChild(left); item.appendChild(right);
+    detailHistory.appendChild(item);
+  });
+}
 
-    function showAdminPrompt() {
-      document.getElementById("adminPrompt").style.display = "block";
-    }
-
-    function hideAdminPrompt() {
-      document.getElementById("adminPrompt").style.display = "none";
-      document.getElementById("adminPassword").value = "";
-    }
-
-    function clearAll() {
-      const input = document.getElementById("adminPassword").value;
-      if (input === adminPassword) {
-        if (confirm("Bạn có chắc muốn xóa tất cả dữ liệu?")) {
-          localStorage.removeItem("entries");
-          location.reload();
-        }
-      } else {
-        alert("❌ Sai mật khẩu admin.");
-      }
-    }
-
-    // Quét barcode bằng webcam
-    const video = document.getElementById("video");
-    const scanner = new QrScanner(video, result => {
-      document.getElementById("barcode").value = result;
+/* ---------- Device modal / save ---------- */
+function openDeviceModal(id){
+  editingDeviceId = id || null;
+  d_previews.innerHTML = '';
+  d_files.value = '';
+  if(id){
+    const d = Storage.getDevices().find(x=>x.id===id);
+    if(!d) return;
+    d_name.value = d.name || '';
+    d_code.value = d.code || '';
+    d_dept.value = d.dept || '';
+    d_status.value = d.status || 'Đang hoạt động';
+    d_serial.value = d.serial || '';
+    d_date.value = d.date || '';
+    d_notes.value = d.notes || '';
+    (d.attachments||[]).forEach(a=>{
+      const el = document.createElement('div'); el.className='thumb';
+      if(a.type && a.type.startsWith('image/')){ const img=document.createElement('img'); img.src=a.data; el.appendChild(img); } else { const sp = document.createElement('div'); sp.className='fname'; sp.textContent = a.name; el.appendChild(sp); }
+      d_previews.appendChild(el);
     });
-    scanner.start();
-  </script>
+  } else {
+    d_name.value=''; d_code.value=''; d_dept.value=''; d_status.value='Đang hoạt động'; d_serial.value=''; d_date.value=''; d_notes.value='';
+  }
+  openModal('overlayDevice');
+}
+function onDeviceFiles(e){
+  const files = Array.from(e.target.files || []);
+  d_previews.innerHTML = '';
+  files.forEach(file=>{
+    const reader = new FileReader();
+    reader.onload = ev=>{
+      const data = ev.target.result;
+      const el = document.createElement('div'); el.className='thumb';
+      if(file.type.startsWith('image/')){ const img=document.createElement('img'); img.src = data; el.appendChild(img); } else { const sp = document.createElement('div'); sp.className='fname'; sp.textContent = file.name; el.appendChild(sp); }
+      d_previews.appendChild(el);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+async function onSaveDevice(e){
+  e.preventDefault();
+  const name = d_name.value.trim();
+  const code = d_code.value.trim();
+  if(!name || !code){ alert('Vui lòng nhập tên và mã thiết bị'); return; }
+  const files = Array.from(d_files.files || []);
+  const attachments = [];
+  for(const file of files){
+    const data = await readFileAsDataURL(file);
+    attachments.push({id: uid(), name: file.name, type: file.type, data});
+  }
+  const ds = Storage.getDevices();
+  if(editingDeviceId){
+    const idx = ds.findIndex(x=>x.id===editingDeviceId);
+    if(idx<0) return;
+    ds[idx].name = name; ds[idx].code = code; ds[idx].dept = d_dept.value.trim(); ds[idx].status = d_status.value; ds[idx].serial = d_serial.value.trim(); ds[idx].date = d_date.value; ds[idx].notes = d_notes.value;
+    if(attachments.length) ds[idx].attachments = ds[idx].attachments.concat(attachments);
+    ds[idx].history = ds[idx].history || [];
+    ds[idx].history.push({id: uid(), ts: today(), desc: 'Cập nhật thông tin', by: currentUser.name});
+  } else {
+    const newD = { id: uid(), name, code, dept: d_dept.value.trim(), status: d_status.value, serial: d_serial.value.trim(), date: d_date.value, notes: d_notes.value, attachments, history: [{id: uid(), ts: today(), desc: 'Tạo thiết bị', by: currentUser.name}] };
+    ds.push(newD);
+  }
+  Storage.setDevices(ds);
+  devices = ds;
+  closeModal('overlayDevice');
+  renderDeviceTable();
+  populateHistDeviceFilter();
+}
+
+/* ---------- History modal ---------- */
+function openHistoryModal(targetDeviceId){
+  if(!targetDeviceId){ alert('Chọn thiết bị'); return; }
+  editingHistoryTarget = targetDeviceId;
+  h_text.value = '';
+  openModal('overlayHistory');
+}
+function onSaveHistory(e){
+  e.preventDefault();
+  const desc = h_text.value.trim();
+  if(!desc) return;
+  const ds = Storage.getDevices();
+  const target = ds.find(x=>x.id===editingHistoryTarget);
+  if(!target) return;
+  target.history = target.history || [];
+  target.history.push({id: uid(), ts: today(), desc, by: currentUser.name});
+  Storage.setDevices(ds);
+  closeModal('overlayHistory');
+  if(currentDetail) openDetail(currentDetail);
+  renderHistoryResults();
+  renderDeviceTable();
+}
+
+/* ---------- Users ---------- */
+function renderUsersTable(){
+  users = Storage.getUsers();
+  tblUsersBody.innerHTML = '';
+  users.forEach(u=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${escapeHtml(u.name)}</td><td>${escapeHtml(u.email)}</td><td><span class="badge">${escapeHtml(u.role)}</span></td>`;
+    const td = document.createElement('td'); td.style.textAlign='right';
+    const btnEdit = document.createElement('button'); btnEdit.className='btn ghost'; btnEdit.textContent='Sửa';
+    btnEdit.addEventListener('click', ()=>{ openModal('overlayUser'); u_name.value=u.name; u_email.value=u.email; u_pass.value=u.password; u_role.value=u.role; });
+    td.appendChild(btnEdit);
+    tr.appendChild(td);
+    tblUsersBody.appendChild(tr);
+  });
+}
+function onSaveUser(e){
+  e.preventDefault();
+  const name = u_name.value.trim(); const email = u_email.value.trim(); const pass = u_pass.value.trim(); const role = u_role.value;
+  if(!name || !email || !pass) return alert('Điền đủ thông tin');
+  const us = Storage.getUsers() || [];
+  const exist = us.find(x=>x.email===email);
+  if(exist){ // update
+    exist.name = name; exist.password = pass; exist.role = role;
+  } else {
+    us.push({id: uid(), name, email, password: pass, role});
+  }
+  Storage.setUsers(us);
+  users = us;
+  closeModal('overlayUser');
+  renderUsersTable();
+}
+
+/* ---------- History search across devices ---------- */
+function populateHistDeviceFilter(){
+  histFilterDevice.innerHTML = '<option value="">Tất cả thiết bị</option>';
+  const ds = Storage.getDevices();
+  ds.forEach(d=>{
+    const opt = document.createElement('option'); opt.value = d.id; opt.textContent = `${d.name} • ${d.code}`; histFilterDevice.appendChild(opt);
+  });
+}
+function renderHistoryResults(){
+  historyResults.innerHTML = '';
+  const q = (histSearch.value||'').toLowerCase().trim();
+  const deviceFilter = histFilterDevice.value;
+  const ds = Storage.getDevices();
+  const rows = [];
+  ds.forEach(d=>{
+    (d.history||[]).forEach(h=>{
+      rows.push({device:d, hist:h});
+    });
+  });
+  const filtered = rows.filter(r=>{
+    if(deviceFilter && r.device.id !== deviceFilter) return false;
+    if(!q) return true;
+    return (r.hist.desc||'').toLowerCase().includes(q) || (r.device.dept||'').toLowerCase().includes(q) || (r.hist.by||'').toLowerCase().includes(q) || (r.device.name||'').toLowerCase().includes(q) || (r.device.code||'').toLowerCase().includes(q);
+  });
+  filtered.sort((a,b)=> b.hist.ts.localeCompare(a.hist.ts));
+  filtered.forEach(r=>{
+    const el = document.createElement('div'); el.className='hist-item';
+    el.innerHTML = `<div style="min-width:0">
+      <div style="font-weight:700">${escapeHtml(r.hist.ts)} — ${escapeHtml(r.device.name)} (${escapeHtml(r.device.code)})</div>
+      <div class="small-muted">${escapeHtml(r.hist.desc)}</div>
+      <div class="small-muted">Bộ phận: ${escapeHtml(r.device.dept||'-')} • Người: ${escapeHtml(r.hist.by||'-')}</div>
+    </div>`;
+    const right = document.createElement('div'); right.style.display='flex'; right.style.gap='8px';
+    if(currentUser && currentUser.role==='admin'){
+      const del = document.createElement('button'); del.className='btn ghost'; del.textContent='Xóa';
+      del.addEventListener('click', ()=>{
+        if(!confirm('Xóa mục lịch sử?')) return;
+        // find and remove
+        const all = Storage.getDevices();
+        const target = all.find(x=>x.id===r.device.id);
+        const idx = (target.history||[]).findIndex(h=>h.id===r.hist.id);
+        if(idx>=0){ target.history.splice(idx,1); Storage.setDevices(all); renderHistoryResults(); renderDeviceTable(); if(currentDetail===target.id) openDetail(target.id); }
+      });
+      right.appendChild(del);
+    }
+    el.appendChild(right);
+    historyResults.appendChild(el);
+  });
+}
+
+/* ---------- Import / Export ---------- */
+function exportAllJSON(){
+  const all = Storage.getDevices();
+  const data = JSON.stringify(all, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'es_devices.json'; a.click();
+  URL.revokeObjectURL(url);
+}
+function onImportFile(e){
+  const f = e.target.files[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ev=>{
+    try{
+      const arr = JSON.parse(ev.target.result);
+      if(Array.isArray(arr)){ Storage.setDevices(arr); devices = arr; renderDeviceTable(); populateHistDeviceFilter(); alert('Import thành công'); }
+      else alert('File không hợp lệ');
+    }catch(err){ alert('Lỗi import'); }
+  };
+  r.readAsText(f);
+}
+
+/* ---------- Modal helpers ---------- */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+/* ---------- Misc ---------- */
+function renderDeviceTableAndStats(){ renderDeviceTable(); renderDashboardStats(); populateHistDeviceFilter(); }
+function onLogoutClick(){ currentUser=null; showLogin(); }
+
+/* ---------- Wire up UI controls that require runtime references ---------- */
+document.getElementById('btnNewDevice').addEventListener('click', ()=>openDeviceModal());
+document.getElementById('detailAddHistory').addEventListener('click', ()=>{ if(!currentDetail) return alert('Chọn thiết bị'); editingHistoryTarget = currentDetail; openModal('overlayHistory'); });
+document.getElementById('detailEdit').addEventListener('click', ()=>{ if(!currentDetail) return alert('Chọn thiết bị'); openDeviceModal(currentDetail); });
+document.getElementById('detailDeleteHistory').addEventListener('click', ()=>{
+  if(!currentDetail) return alert('Chọn thiết bị');
+  if(!currentUser || currentUser.role!=='admin') return alert('Chỉ admin được xóa lịch sử');
+  const d = Storage.getDevices().find(x=>x.id===currentDetail);
+  if(!d || !d.history || d.history.length===0) return alert('Không có lịch sử');
+  if(!confirm('Xóa toàn bộ lịch sử của thiết bị này?')) return;
+  d.history = [];
+  Storage.setDevices(Storage.getDevices());
+  openDetail(currentDetail);
+  renderHistoryResults();
+});
+
+/* ---------- Run ---------- */
+boot();
+renderDeviceTable();
+renderUsersTable();
+renderHistoryResults();
+
+</script>
 </body>
 </html>
